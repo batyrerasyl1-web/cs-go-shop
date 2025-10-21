@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CS:GO</title>
+  <style>
+    :root{
+      --bg:#071028; /* dark navy */
+      --panel:#0b2238; /* blue-black panel */
+      --accent:#1fb6ff; /* bright cyan */
+      --muted:#9fb6d1;
+      --card:#0f2a42;
+      --glass: rgba(255,255,255,0.03);
+      --price-bg: linear-gradient(90deg,#093d66,#052033);
+      font-family: "Inter", system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% 10%, rgba(31,182,255,0.05), transparent), linear-gradient(180deg,var(--bg), #00101a);color:#e6f7ff}
+    .container{max-width:1100px;margin:28px auto;padding:20px}
+
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#08305a,#052033);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+    .logo strong{font-size:18px;color:var(--accent)}
+    h1{font-size:20px;margin:0}
+    .subtitle{color:var(--muted);font-size:13px}
+
+    .controls{display:flex;align-items:center;gap:12px}
+    .search{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;color:var(--muted)}
+    .btn{background:var(--accent);color:#021428;padding:8px 12px;border-radius:10px;border:none;font-weight:600;cursor:pointer}
+
+    .hero{margin:18px 0;padding:20px;border-radius:12px;background:linear-gradient(90deg, rgba(31,182,255,0.06), rgba(255,255,255,0.01));display:flex;align-items:center;gap:20px}
+    .hero .left{flex:1}
+    .hero h2{margin:0 0 6px 0}
+    .hero p{margin:0;color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:18px}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 24px rgba(0,0,0,0.6);display:flex;flex-direction:column}
+    .media{height:140px;border-radius:8px;background:linear-gradient(135deg,#06243f,#092a47);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:700}
+    .meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .name{font-weight:700}
+    .desc{color:var(--muted);font-size:13px;margin-top:6px}
+    .price{background:var(--price-bg);padding:8px 10px;border-radius:8px;font-weight:700}
+
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .action{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted);cursor:pointer}
+    .action.primary{background:var(--accent);color:#021428;border:none}
+
+    /* cart sidebar */
+    .cart-btn{position:relative}
+    .cart-count{position:absolute;top:-8px;right:-8px;background:#ff6b6b;color:#021428;font-weight:700;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px}
+
+    .cart-panel{position:fixed;right:20px;top:80px;width:340px;max-height:70vh;background:linear-gradient(180deg,#071a2b,#04121a);border-radius:12px;padding:14px;box-shadow:0 18px 40px rgba(0,0,0,0.7);overflow:auto;border:1px solid rgba(255,255,255,0.03)}
+    .cart-item{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.03)}
+    .cart-item .mini{width:56px;height:40px;border-radius:6px;background:#052033;display:flex;align-items:center;justify-content:center}
+    .cart-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+
+    footer{margin-top:28px;color:var(--muted);font-size:13px}
+
+    @media (max-width:700px){.cart-panel{position:static;width:100%;margin-top:18px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo"><strong>CG</strong></div>
+        <div>
+          <h1>CS:GO Market — Demo</h1>
+          <div class="subtitle">Қарулар мен скиндер — KZT валютада</div>
+        </div>
+      </div>
+      <div class="controls">
+        <input id="q" class="search" placeholder="Іздеу: аты немесе категориясы..." />
+        <button id="toggleCart" class="btn cart-btn">Себет <span id="cartCount" class="cart-count">0</span></button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="left">
+        <h2>Сайттау көрсеткіші: Сатып алуға дайын CS:GO қарулары</h2>
+        <p></p>
+      </div>
+      <div>
+        <button id="clearCart" class="btn">Себетті босату</button>
+      </div>
+    </section>
+
+    <main>
+      <div id="grid" class="grid"></div>
+    </main>
+
+    <footer>©</footer>
+  </div>
+
+  <div id="cartPanel" class="cart-panel" style="display:none">
+    <h3>Себет</h3>
+    <div id="cartItems"></div>
+    <div class="cart-footer">
+      <strong>Жалпы:</strong>
+      <div id="cartTotal">0 ₸</div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button id="checkout" class="btn" style="flex:1">Сатып алу</button>
+      <button id="closeCart" class="action" style="flex:1">Жабу</button>
+    </div>
+  </div>
+
+  <script>
+    // Өнімдер тізімі (сіз қалағандай өзгертуге болады)
+    const products = [
+      {id:1,name:"AK-47 | Redline",price:180000,category:"Rifle",desc:"Белсенді танымал штурмовая винтовка"},
+      {id:2,name:"AWP | Asiimov",price:12000000,category:"Sniper",desc:"Тамаша дәлдікпен танымал AWP"},
+      {id:3,name:"M4A4 | Howl",price:1500058,category:"Rifle",desc:"Еуропада танымал M4A4"},
+      {id:4,name:"Desert Eagle | Blaze",price:750000,category:"Pistol",desc:"Қуатты және көзге тартымды пистолет"},
+      {id:5,name:"P90 | Emerald Dragon",price:600000,category:"SMG",desc:"Жылдам атыс үшін SMG"},
+      {id:6,name:"Glock-18 | Fade",price:200000,category:"Pistol",desc:"Төмен бағамен жақсы пистолет"},
+      {id:7,name:"USP-S | Cortex",price:250058,category:"Pistol",desc:"Тыныш сопақша пистолет (silenced)"},
+      {id:8,name:"FAMAS | Valence",price:420099,category:"Rifle",desc:"Орташа бағадағы автомат"},
+      {id:9,name:"CZ75-Auto | Victoria",price:320024,category:"Pistol",desc:"Автоматикалық кішкентай қару"},
+      {id:10,name:"Nova | Hyper Beast",price:280000,category:"Shotgun",desc:"Қысқа қашықтықтағы қуатты дробовик"}
+    ];
+
+    const formatKZT = n => n.toLocaleString('kk-KZ') + ' ₸';
+
+    // DOM
+    const grid = document.getElementById('grid');
+    const q = document.getElementById('q');
+    const cartCount = document.getElementById('cartCount');
+    const cartPanel = document.getElementById('cartPanel');
+    const cartItemsEl = document.getElementById('cartItems');
+    const cartTotalEl = document.getElementById('cartTotal');
+
+    // Қарапайым себет (локал жағдай)
+    let cart = [];
+
+    function renderProducts(list){
+      grid.innerHTML = '';
+      list.forEach(p => {
+        const card = document.createElement('div'); card.className='card';
+        const media = document.createElement('div'); media.className='media';
+        // simple inline SVG placeholder
+        media.innerHTML = `<svg width="220" height="120" viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><rect rx="8" width="220" height="120" fill="url(#g)"/><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#08305a"/><stop offset="1" stop-color="#052033"/></linearGradient></defs><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="16" fill="#1fb6ff">${p.name}</text></svg>`;
+        const meta = document.createElement('div'); meta.className='meta';
+        const left = document.createElement('div'); left.innerHTML = `<div class="name">${p.name}</div><div class="desc">${p.desc}</div>`;
+        const right = document.createElement('div'); right.innerHTML = `<div class="price">${formatKZT(p.price)}</div>`;
+        meta.appendChild(left); meta.appendChild(right);
+        const actions = document.createElement('div'); actions.className='actions';
+        const info = document.createElement('button'); info.className='action'; info.textContent='Толығырақ';
+        const buy = document.createElement('button'); buy.className='action primary'; buy.textContent='Себетке қосу';
+        buy.onclick = ()=>{ addToCart(p.id); };
+        actions.appendChild(info); actions.appendChild(buy);
+
+        card.appendChild(media); card.appendChild(meta); card.appendChild(actions);
+        grid.appendChild(card);
+      })
+    }
+
+    function addToCart(id){
+      const item = products.find(x=>x.id===id);
+      const existing = cart.find(c=>c.id===id);
+      if(existing){ existing.qty += 1; }
+      else cart.push({id:item.id,name:item.name,price:item.price,qty:1});
+      updateCartUI();
+    }
+
+    function updateCartUI(){
+      cartCount.textContent = cart.reduce((s,i)=>s+i.qty,0);
+      cartItemsEl.innerHTML = '';
+      cart.forEach(ci=>{
+        const el = document.createElement('div'); el.className='cart-item';
+        el.innerHTML = `<div class="mini">${ci.name.split(' ')[0]}</div><div style="flex:1"><div style="font-weight:700">${ci.name}</div><div style="color:var(--muted)">${ci.qty} x ${formatKZT(ci.price)}</div></div><div style="font-weight:700">${formatKZT(ci.price*ci.qty)}</div>`;
+        cartItemsEl.appendChild(el);
+      });
+      cartTotalEl.textContent = formatKZT(cart.reduce((s,i)=>s+i.price*i.qty,0));
+    }
+
+    document.getElementById('toggleCart').addEventListener('click', ()=>{
+      cartPanel.style.display = cartPanel.style.display === 'none' ? 'block' : 'none';
+    });
+    document.getElementById('closeCart').addEventListener('click', ()=>{ cartPanel.style.display='none'; });
+    document.getElementById('clearCart').addEventListener('click', ()=>{ cart = []; updateCartUI(); });
+    document.getElementById('checkout').addEventListener('click', ()=>{
+      if(cart.length===0){ alert('Себет бос!'); return; }
+      alert('Тапсырыс қабылданды (демо). Жалпы сомасы: ' + cartTotalEl.textContent);
+      cart = []; updateCartUI();
+    });
+
+    q.addEventListener('input', ()=>{
+      const v = q.value.trim().toLowerCase();
+      if(!v) return renderProducts(products);
+      const filtered = products.filter(p=> p.name.toLowerCase().includes(v) || p.category.toLowerCase().includes(v) );
+      renderProducts(filtered);
+    });
+
+    // алғаш жүктеу
+    renderProducts(products);
+    updateCartUI();
+  </script>
+</body>
+</html>
